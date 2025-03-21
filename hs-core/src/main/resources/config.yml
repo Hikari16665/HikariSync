@@ -1,0 +1,17 @@
+mysql:
+  host: localhost
+  port: 3306
+  usessl: false
+  user: hikarisync
+  password: hikarisync
+  database: hikarisync
+save:
+  auto_save: 120
+  on_quit: true
+  on_inventory_close: true
+  on_death: true
+load:
+  on_join: true
+situation:
+  if_join_multiple_servers: KICK
+  if_join_multiple_servers_message: '&cYou are already logged in to other server.'

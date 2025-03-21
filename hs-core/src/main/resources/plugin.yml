@@ -4,4 +4,4 @@ main: me.eventually.hikarisynccore.HikariSyncCore
 api-version: '1.20'
 load: STARTUP
 authors: [ Eventually ]
-description: HikariSync plugin core, need addons to start up.
+description: HikariSync Plugin core, need addons to provide features.

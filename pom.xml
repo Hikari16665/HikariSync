@@ -3,70 +3,95 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>me.eventually</groupId>
-    <artifactId>HikariSync-Core</artifactId>
+    <groupId>com.github.hikari16665</groupId>
+    <artifactId>hikarisync</artifactId>
+    <name>HikariSync</name>
     <version>1.0.0</version>
-    <packaging>jar</packaging>
-
-    <name>HikariSync-Core</name>
-
+    <packaging>pom</packaging>
+    <description>
+        HikariSync is a plugin set that allows you to sync data between servers,
+        HikariSync-Core is the framework (no effect if you don't use any addons), and the addons provide the features.
+        Author of the project is Eventually (GitHub @Hikari16665).
+        This project is open source and free to use, licensed under MIT License.
+    </description>
+    <modules>
+        <module>hs-core</module>
+        <module>hs-api</module>
+    </modules>
+    <scm>
+        <connection>scm:git:git://github.com/Hikari16665/HikariSync.git</connection>
+        <developerConnection>scm:git:ssh://github.com:Hikari16665/HikariSync.git</developerConnection>
+        <url>http://github.com/Hikari16665/HikariSync/</url>
+    </scm>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+            <comments>This project is licensed under the MIT License. Addon developments are without any restrictions.</comments>
+        </license>
+    </licenses>
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </distributionManagement>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <modules>
+                <module>hs-api</module>
+            </modules>
+        </profile>
+    </profiles>
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.spigotmc</groupId>
+                <artifactId>spigot-api</artifactId>
+                <version>1.20.1-R0.1-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <repositories>
+        <repository>
+            <id>maven-central</id>
+            <url>https://repo1.maven.apache.org/maven2</url>
+        </repository>
+    </repositories>
     <build>
-        <defaultGoal>clean package</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.3</version>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.1</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <id>attach-javadocs</id>
                         <goals>
-                            <goal>shade</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
-
-    <repositories>
-        <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
-    </repositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.20.4-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
 </project>

@@ -1,10 +1,19 @@
 package me.eventually.hikarisyncapi.database;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-public abstract class AbstractDBKey {
+
+@ParametersAreNonnullByDefault
+/*
+  A table definition for the database.
+  tableName is the name of the table.
+  Must implement getFields()
+ */
+public abstract class AbstractDBTable {
     protected String tableName;
-    public AbstractDBKey(String tableName) {
+    protected String tablePrefix = "hs_";
+    public AbstractDBTable(String tableName) {
         this.tableName = tableName;
     }
     protected abstract List<DBField> getFields();
@@ -22,16 +31,19 @@ public abstract class AbstractDBKey {
             this.name = name;
             this.type = type;
         }
-        public void setPrimaryKey(Boolean primaryKey) {
+        public DBField setPrimaryKey(Boolean primaryKey) {
             this.primaryKey = primaryKey;
+            return this;
         }
 
-        public void setNullable(Boolean nullable) {
+        public DBField setNullable(Boolean nullable) {
             this.nullable = nullable;
+            return this;
         }
 
-        public void setType(String type) {
+        public DBField setType(String type) {
             this.type = type;
+            return this;
         }
 
         public Boolean getId() {
@@ -53,14 +65,20 @@ public abstract class AbstractDBKey {
             return primaryKey;
         }
     }
-    public String generateCreateTableScript() {
+    public String generateCreateTableScript() throws IllegalStateException{
         StringBuilder script = new StringBuilder();
         script
                 .append("CREATE TABLE IF NOT EXISTS ")
+                .append(tablePrefix)
                 .append(tableName)
                 .append(" (");
+        int i = 0;
         for (DBField field : getFields()) {
+            i++;
             if (field.getId()) {
+                if (i != 1){
+                    throw new IllegalArgumentException("The id key should be first.");
+                }
                 script.append("id INT AUTO_INCREMENT PRIMARY KEY, ");
             } else {
                 script.append(field.getName()).append(" ").append(field.getType());
