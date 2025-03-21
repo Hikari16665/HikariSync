@@ -3,13 +3,13 @@ package me.eventually.hikarisyncapi.database;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-
-@ParametersAreNonnullByDefault
-/*
-  A table definition for the database.
-  tableName is the name of the table.
-  Must implement getFields()
+/**
+ * A table definition for the database.
+ * tableName is the name of the table.
+ * Must implement getFields()
+ * @author Eventually
  */
+@ParametersAreNonnullByDefault
 public abstract class AbstractDBTable {
     protected String tableName;
     protected String tablePrefix = "hs_";
@@ -94,5 +94,8 @@ public abstract class AbstractDBTable {
         script.delete(script.length() - 2, script.length());
         script.append(");");
         return script.toString();
+    }
+    public String getTableName() {
+        return tableName;
     }
 }

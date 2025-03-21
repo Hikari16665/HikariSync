@@ -1,6 +1,6 @@
 name: HikariSync-Core
 version: '1.0.0'
-main: me.eventually.hikarisynccore.HikariSyncCore
+main: me.eventually.hikarisync.core.HikariSyncCore
 api-version: '1.20'
 load: STARTUP
 authors: [ Eventually ]
