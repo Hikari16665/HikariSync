@@ -1,0 +1,7 @@
+name: HikariSync-Core
+version: '1.0.0'
+main: me.eventually.hikarisynccore.HikariSyncCore
+api-version: '1.20'
+load: STARTUP
+authors: [ Eventually ]
+description: HikariSync plugin core, need addons to start up.
