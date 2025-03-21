@@ -12,35 +12,65 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 public abstract class AbstractDBTable {
     protected String tableName;
-    protected String tablePrefix = "hs_";
     public AbstractDBTable(String tableName) {
         this.tableName = tableName;
     }
     protected abstract List<DBField> getFields();
 
+    /**
+     * A field definition for the database.
+     * @author Eventually
+     */
     protected static class DBField {
         private String name;
         private String type;
         private Boolean nullable;
         private Boolean primaryKey;
         private Boolean isId = false;
+
+        /**
+         * If your field is the id, set this to true, this will automatically set the type to INT and make it the primary key.
+         * Please note id field should be the first field in the table.
+         * @param isId true if this field is id
+         */
         public DBField(Boolean isId){
             this.isId = isId;
         }
+
+        /**
+         * Common constructor for all fields.
+         * @param name
+         * @param type
+         */
         public DBField(String name, String type) {
             this.name = name;
             this.type = type;
         }
+
+        /**
+         * Primary key
+         * @param primaryKey true if this field is primary key
+         * @return field instance, can be chained.
+         */
         public DBField setPrimaryKey(Boolean primaryKey) {
             this.primaryKey = primaryKey;
             return this;
         }
-
+        /**
+         * Nullable
+         * @param nullable true if this field is nullable
+         * @return field instance, can be chained.
+         */
         public DBField setNullable(Boolean nullable) {
             this.nullable = nullable;
             return this;
         }
 
+        /**
+         * Type(String)
+         * @param type type of the field
+         * @return field instance, can be chained.
+         */
         public DBField setType(String type) {
             this.type = type;
             return this;
@@ -69,7 +99,6 @@ public abstract class AbstractDBTable {
         StringBuilder script = new StringBuilder();
         script
                 .append("CREATE TABLE IF NOT EXISTS ")
-                .append(tablePrefix)
                 .append(tableName)
                 .append(" (");
         int i = 0;
@@ -94,8 +123,5 @@ public abstract class AbstractDBTable {
         script.delete(script.length() - 2, script.length());
         script.append(");");
         return script.toString();
-    }
-    public String getTableName() {
-        return tableName;
     }
 }

@@ -5,3 +5,10 @@ api-version: '1.20'
 load: STARTUP
 authors: [ Eventually ]
 description: HikariSync Plugin core, need addons to provide features.
+commands:
+  hikarisync:
+    permission: hikarisync.command
+    permission-message: You do not have permission to use this command.
+    usage: /hikarisync
+    description: HikariSync Main Command
+    aliases: [ sync ]

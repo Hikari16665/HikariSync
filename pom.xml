@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
     <description>
         HikariSync is a plugin set that allows you to sync data between servers,
-        HikariSync-Core is the framework (no effect if you don't use any addons), and the addons provide the features.
+        HikariSync-Core is the framework, and the addons provide the features.
         Author of the project is Eventually (GitHub @Hikari16665).
         This project is open source and free to use, licensed under MIT License.
     </description>

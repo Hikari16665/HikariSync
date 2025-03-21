@@ -7,14 +7,15 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * A wrapped class for database connection.
+ * Use {@link #getDataSource()} to get the datasource, and you can use it to do anything you want
  * @author Eventually
  */
 public class DBConnection {
     private final DataSource dataSource;
-    private String currentTable;
 
     public DBConnection(String host, int port, String database,
                         String username, String password, boolean useSSL) {
@@ -28,12 +29,14 @@ public class DBConnection {
         this.dataSource = new HikariDataSource(config);
     }
 
-    // 切换当前操作表
-    public void setTable(String tableName) {
-        this.currentTable = tableName;
-    }
 
-    // 通用查询方法
+    /**
+     * Common query method
+     * @param sql SQL query command
+     * @param params SQL query parameters
+     * @return Query result
+     * @throws SQLException handle it yourself
+     */
     public List<Object[]> query(String sql, Object... params) throws SQLException {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -56,6 +59,13 @@ public class DBConnection {
         }
     }
 
+    /**
+     * Common sql command execute method
+     * @param sql SQL command
+     * @param params SQL command parameters
+     * @return rows affected
+     * @throws SQLException handle it yourself
+     */
     public int execute(String sql, Object... params) throws SQLException {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -65,35 +75,66 @@ public class DBConnection {
         }
     }
 
-    // 快捷方法（使用当前表）
-    public List<Object[]> select(String whereClause) throws SQLException {
-        return query("SELECT * FROM " + currentTable + " WHERE " + whereClause);
+    /**
+     * Fast way to select data
+     * @param tableName table name
+     * @param whereClause sql where clause, like "id = 123456"
+     * @param params SQL command parameters
+     * @return query result
+     * @throws SQLException handle it yourself
+     */
+    public List<Object[]> select(String tableName, String whereClause, Object... params) throws SQLException {
+        return query("SELECT * FROM " + tableName + " WHERE " + whereClause, params);
     }
 
-    public int insert(Object... values) throws SQLException {
+    /**
+     * Fast way to insert data
+     * @param tableName table name
+     * @param values values to insert
+     * @return rows affected
+     * @throws SQLException handle it yourself
+     */
+    public int insert(String tableName, Object... values) throws SQLException {
         String placeholders = String.join(",",
                 java.util.Collections.nCopies(values.length, "?"));
-        return execute("INSERT INTO " + currentTable + " VALUES(" + placeholders + ")", values);
+        return execute("INSERT INTO " + tableName + " VALUES(" + placeholders + ")", values);
     }
 
+    /**
+     * Set parameters to sql command
+     * @param pstmt PreparedStatement
+     * @param params parameters
+     * @throws SQLException handle it yourself
+     */
     private void setParameters(PreparedStatement pstmt, Object... params) throws SQLException {
         for (int i = 0; i < params.length; i++) {
             pstmt.setObject(i + 1, params[i]);
         }
     }
 
-    public void transaction(Runnable task) throws SQLException {
+    /**
+     * Fast way to do transaction
+     * @param task task to run
+     * @throws SQLException
+     */
+    public <T> T transaction(Callable<T> task) throws SQLException {
         try (Connection conn = dataSource.getConnection()) {
             conn.setAutoCommit(false);
             try {
-                task.run();
+                T result = task.call();
                 conn.commit();
+                return result;
             } catch (Exception e) {
                 conn.rollback();
-                throw e;
+                throw new SQLException(e);
             }
         }
     }
+
+    /**
+     * Get the datasource, and you can use it to do anything you want
+     * @return HikariDataSource
+     */
     public HikariDataSource getDataSource() {
         return (HikariDataSource) dataSource;
     }
