@@ -1,6 +1,8 @@
-# HikariSync 
+# HikariSync
+# Now developing, see ``dev`` branch for more info
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
 [![Java 17+](https://img.shields.io/badge/Java-17%2B-orange)](https://adoptium.net/)
+[![Jitpack Build](https://jitpack.io/v/Hikari16665/HikariSync.svg)]]
 
 
 # A cross-server data synchronization framework
