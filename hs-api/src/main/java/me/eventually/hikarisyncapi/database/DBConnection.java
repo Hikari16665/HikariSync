@@ -63,7 +63,7 @@ public class DBConnection {
      * Common sql command execute method
      * @param sql SQL command
      * @param params SQL command parameters
-     * @return rows affected
+     * @return rows affected, 0 means no change
      * @throws SQLException handle it yourself
      */
     public int execute(String sql, Object... params) throws SQLException {
@@ -78,8 +78,8 @@ public class DBConnection {
     /**
      * Fast way to select data
      * @param tableName table name
-     * @param whereClause sql where clause, like "id = 123456"
-     * @param params SQL command parameters
+     * @param whereClause sql where clause, like "id = ?"
+     * @param params parameters for where clause
      * @return query result
      * @throws SQLException handle it yourself
      */
@@ -101,7 +101,7 @@ public class DBConnection {
     }
 
     /**
-     * Set parameters to sql command
+     * Set parameters to sql command, private method
      * @param pstmt PreparedStatement
      * @param params parameters
      * @throws SQLException handle it yourself

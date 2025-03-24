@@ -1,17 +1,33 @@
+# HikariSync-Core Configuration
+# Happy Configuring!
+
+# Debug Mode, will print debug message to console (Spamming).
+debug: false
+# Send all debug message to console (Even more spamming)
+full_debug: false
+# MySQL Configuration, you should prepare your database before using this plugin.
+# A database and a user that has all perms to modify it.
 mysql:
-  host: localhost
+  host: 127.0.0.1
   port: 3306
-  usessl: false
-  user: hikarisync
+  usessl: true # Use SSL to connect to MySQL
+  username: hikarisync
   password: hikarisync
   database: hikarisync
+# Load/Save Situation
+# Disable Load/Save condition will cause all addon features that use this condition to not work.
 save:
-  auto_save: 120
-  on_quit: true
-  on_inventory_close: true
-  on_death: true
+  auto_save: 120 # Save data automatically, in seconds, 0 means disable.
+  on_quit: true # Save Data when player quit.
+  on_inventory_close: true # Save Data when player close inventory.
+  on_death: true # Save Data when player die.
 load:
   on_join: true
+# Situation Configuration
+# Control the behavior of the plugin in different situations.
+# Default values are the best settings, setting them to false may cause some unexpected behaviors.
 situation:
-  if_join_multiple_servers: KICK
-  if_join_multiple_servers_message: '&cYou are already logged in to other server.'
+  # Kick player if they join multiple servers.
+  # If disabled, may break data synchronization
+  # (prevent this by using different database).
+  kick_if_join_multiple_servers: true

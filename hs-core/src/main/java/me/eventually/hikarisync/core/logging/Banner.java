@@ -12,7 +12,8 @@ public class Banner {
     ██║  ██║██║██║  ██╗██║  ██║██║  ██║██║    ███████║   ██║   ██║ ╚████║╚██████╗\s
     ╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝    ╚══════╝   ╚═╝   ╚═╝  ╚═══╝ ╚═════╝\s
 
-    Cross-server data synchronization framework by Eventually""";
+    Cross-server data synchronization framework by Eventually
+    """;
     public static void printBanner(Logger logger) {
         logger.info(banner);
     }

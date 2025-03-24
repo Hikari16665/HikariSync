@@ -30,7 +30,7 @@ public class ExampleHSAddon extends HSAddon {
         return "1.0.114514";
     }
     @Override
-    public List<AbstractDBTable> getTableDefinitions() {
+    public List<? extends AbstractDBTable> getTableDefinitions() {
         return List.of(
             new ExampleDBTable("example")
         );

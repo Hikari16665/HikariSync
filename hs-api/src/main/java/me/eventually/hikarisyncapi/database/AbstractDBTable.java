@@ -45,6 +45,9 @@ public abstract class AbstractDBTable {
         public DBField(String name, String type) {
             this.name = name;
             this.type = type;
+            this.nullable = false;
+            this.primaryKey = false;
+            this.isId = false;
         }
 
         /**
@@ -76,7 +79,7 @@ public abstract class AbstractDBTable {
             return this;
         }
 
-        public Boolean getId() {
+        public Boolean isId() {
             return isId;
         }
 
@@ -104,7 +107,7 @@ public abstract class AbstractDBTable {
         int i = 0;
         for (DBField field : getFields()) {
             i++;
-            if (field.getId()) {
+            if (field.isId()) {
                 if (i != 1){
                     throw new IllegalArgumentException("The id key should be first.");
                 }

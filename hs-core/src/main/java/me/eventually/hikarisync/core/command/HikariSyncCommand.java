@@ -6,9 +6,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-
+@ParametersAreNonnullByDefault
 public class HikariSyncCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
