@@ -12,8 +12,9 @@ public class UUIDTable extends AbstractDBTable {
     @Override
     protected List<DBField> getFields() {
         return List.of(
-                new DBField("uuid", "VARCHAR(36)")
-                        .setPrimaryKey(true)
+                new DBField("uuid", "VARCHAR(36)").setPrimaryKey(true),
+                new DBField("instance_id", "VARCHAR(36)").setNullable(false),
+                new DBField("FOREIGN KEY (instance_id) REFERENCES hs_core_servers(instance_id)")
         );
     }
 

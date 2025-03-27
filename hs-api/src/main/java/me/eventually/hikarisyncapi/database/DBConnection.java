@@ -6,6 +6,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -67,6 +68,7 @@ public class DBConnection {
      * @throws SQLException handle it yourself
      */
     public int execute(String sql, Object... params) throws SQLException {
+        System.out.println("sql: " + sql);
         try (Connection conn = dataSource.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -96,7 +98,7 @@ public class DBConnection {
      */
     public int insert(String tableName, Object... values) throws SQLException {
         String placeholders = String.join(",",
-                java.util.Collections.nCopies(values.length, "?"));
+                Collections.nCopies(values.length, "?"));
         return execute("INSERT INTO " + tableName + " VALUES(" + placeholders + ")", values);
     }
 
@@ -104,7 +106,7 @@ public class DBConnection {
      * Set parameters to sql command, private method
      * @param pstmt PreparedStatement
      * @param params parameters
-     * @throws SQLException handle it yourself
+     * @throws SQLException handle
      */
     private void setParameters(PreparedStatement pstmt, Object... params) throws SQLException {
         for (int i = 0; i < params.length; i++) {

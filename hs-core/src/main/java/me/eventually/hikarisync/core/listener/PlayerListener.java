@@ -19,16 +19,18 @@ import org.bukkit.event.player.*;
 import java.sql.SQLException;
 
 public class PlayerListener implements Listener {
+    private final HikariSyncCore core;
     private final boolean load_on_join;
     private final boolean save_on_quit;
     private final boolean save_on_inventory_close;
     private final boolean save_on_death;
 
-    public PlayerListener(boolean loadOnJoin, boolean saveOnQuit, boolean saveOnInventoryClose, boolean saveOnDeath) {
-        load_on_join = loadOnJoin;
-        save_on_quit = saveOnQuit;
-        save_on_inventory_close = saveOnInventoryClose;
-        save_on_death = saveOnDeath;
+    public PlayerListener(HikariSyncCore core) {
+        this.core = core;
+        load_on_join = core.getConfig().getBoolean("load-on-join");
+        save_on_quit = core.getConfig().getBoolean("save-on-quit");
+        save_on_inventory_close = core.getConfig().getBoolean("save-on-inventory-close");
+        save_on_death = core.getConfig().getBoolean("save-on-death");
     }
 
     /** Handle player login attempt, kick if player has already logged in any data-sync server
@@ -40,7 +42,7 @@ public class PlayerListener implements Listener {
     public void handlePlayerLoginAttempt(PlayerLoginEvent event){
         LoggingUtil.logDebug("Querying player uuid storing");
         try {
-            HikariSyncCore.getInstance().getDb().insert("hs_core_uuid", event.getPlayer().getUniqueId().toString());
+            core.getDb().insert("hs_core_players", event.getPlayer().getUniqueId().toString(), HikariSyncCore.getInstanceId());
         } catch (SQLException e) {
             if (e.getErrorCode() == 1062) { // duplicate entry, means multiple login
                 event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "You have already logged in other data-sync server.");
@@ -63,7 +65,7 @@ public class PlayerListener implements Listener {
         // delete uuid entry from database
         LoggingUtil.logDebug("Executing delete for player uuid storing");
         try {
-            HikariSyncCore.getInstance().getDb().execute("DELETE FROM hs_core_uuid WHERE uuid = ?", event.getPlayer().getUniqueId().toString());
+            HikariSyncCore.getInstance().getDb().execute("DELETE FROM hs_core_players WHERE uuid = ?", event.getPlayer().getUniqueId().toString());
         } catch (SQLException ignored) {
         }
         if (!save_on_quit) return;

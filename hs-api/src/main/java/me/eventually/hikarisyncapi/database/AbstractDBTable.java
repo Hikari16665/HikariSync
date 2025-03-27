@@ -25,8 +25,11 @@ public abstract class AbstractDBTable {
         private String name;
         private String type;
         private Boolean nullable;
+        private String defaultValue;
         private Boolean primaryKey;
+        private Boolean unique;
         private Boolean isId = false;
+        private String sql;
 
         /**
          * If your field is the id, set this to true, this will automatically set the type to INT and make it the primary key.
@@ -48,6 +51,11 @@ public abstract class AbstractDBTable {
             this.nullable = false;
             this.primaryKey = false;
             this.isId = false;
+            this.unique = false;
+        }
+
+        public DBField(String sql) {
+            this.sql = sql;
         }
 
         /**
@@ -69,6 +77,11 @@ public abstract class AbstractDBTable {
             return this;
         }
 
+        public DBField setUnique(Boolean unique) {
+            this.unique = unique;
+            return this;
+        }
+
         /**
          * Type(String)
          * @param type type of the field
@@ -76,6 +89,11 @@ public abstract class AbstractDBTable {
          */
         public DBField setType(String type) {
             this.type = type;
+            return this;
+        }
+
+        public DBField setDefaultValue(String defaultValue) {
+            this.defaultValue = defaultValue;
             return this;
         }
 
@@ -90,12 +108,21 @@ public abstract class AbstractDBTable {
         public String getType() {
             return type;
         }
+
         public Boolean getNullable() {
             return nullable;
         }
 
+        public Boolean getUnique() {
+            return unique;
+        }
+
         public Boolean getPrimaryKey() {
             return primaryKey;
+        }
+
+        public String getDefaultValue() {
+            return defaultValue;
         }
     }
     public String generateCreateTableScript() throws IllegalStateException{
@@ -107,11 +134,15 @@ public abstract class AbstractDBTable {
         int i = 0;
         for (DBField field : getFields()) {
             i++;
+            if (field.sql != null) {
+                script.append(field.sql).append(", ");
+                continue;
+            }
             if (field.isId()) {
                 if (i != 1){
                     throw new IllegalArgumentException("The id key should be first.");
                 }
-                script.append("id INT AUTO_INCREMENT PRIMARY KEY, ");
+                script.append("id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, ");
             } else {
                 script.append(field.getName()).append(" ").append(field.getType());
                 if (field.getPrimaryKey()) {
@@ -119,6 +150,12 @@ public abstract class AbstractDBTable {
                 }
                 if (!field.getNullable()) {
                     script.append(" NOT NULL");
+                }
+                if (field.getUnique()) {
+                    script.append(" UNIQUE");
+                }
+                if (field.getDefaultValue() != null) {
+                    script.append(" DEFAULT ").append(field.getDefaultValue());
                 }
                 script.append(", ");
             }
