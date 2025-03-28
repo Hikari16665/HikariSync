@@ -11,11 +11,12 @@ import me.eventually.hikarisync.core.manager.AddonManager;
 import me.eventually.hikarisync.core.task.HeartBeatTask;
 import me.eventually.hikarisync.core.task.TimedSaveTask;
 import me.eventually.hikarisyncapi.database.DBConnection;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,6 +25,7 @@ public final class HikariSyncCore extends JavaPlugin {
     private static AddonManager addonManager;
     private static DBConnection db;
     private static TimedSaveTask saveTask;
+    private static Metrics metrics;
 
     // Random UUID for each instance
     private static final String instanceId = UUID.randomUUID().toString();
@@ -89,8 +91,11 @@ public final class HikariSyncCore extends JavaPlugin {
         try {
             AtomicInteger deletedRows = new AtomicInteger();
             db.transaction(() -> {
+                // delete outdated player data if server is not active
                 db.execute("DELETE player FROM hs_core_players player JOIN hs_core_servers server ON player.instance_id = server.instance_id WHERE server.status = 'ACTIVE' AND server.last_heartbeat < NOW() - INTERVAL 1 MINUTE;");
+                // delete outdated server data if server is not active
                 deletedRows.set(db.execute("DELETE FROM hs_core_servers WHERE status = 'ACTIVE' AND last_heartbeat < NOW() - INTERVAL 1 MINUTE;"));
+                // insert new server instance data
                 db.execute("INSERT INTO hs_core_servers(instance_id, created_at) VALUES (?, NOW())", instanceId);
                 return null;
             });
@@ -127,6 +132,12 @@ public final class HikariSyncCore extends JavaPlugin {
         new HeartBeatTask(this).runTaskTimerAsynchronously(this, 0, 20L * 10);
         // All things are ready!
         Bukkit.getLogger().info("HikariSync enabled.");
+        metrics = new Metrics(this, 25276);
+        metrics.addCustomChart(
+                new SingleLineChart("installed_addons", () -> {
+                    return getAddonManager().getAddonClasses().size();
+                })
+        );
         isCoreReady = true;
     }
     public boolean checkDbReady() {
@@ -163,6 +174,8 @@ public final class HikariSyncCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (metrics != null) metrics.shutdown();
+
         try {
             getDb().transaction(() -> {
                 db.execute("DELETE FROM hs_core_players WHERE instance_id = ?;", instanceId);

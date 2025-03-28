@@ -11,7 +11,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
@@ -27,10 +26,10 @@ public class PlayerListener implements Listener {
 
     public PlayerListener(HikariSyncCore core) {
         this.core = core;
-        load_on_join = core.getConfig().getBoolean("load-on-join");
-        save_on_quit = core.getConfig().getBoolean("save-on-quit");
-        save_on_inventory_close = core.getConfig().getBoolean("save-on-inventory-close");
-        save_on_death = core.getConfig().getBoolean("save-on-death");
+        load_on_join = core.getConfig().getBoolean("load.on_join");
+        save_on_quit = core.getConfig().getBoolean("save.on_quit");
+        save_on_inventory_close = core.getConfig().getBoolean("save.on_inventory_close");
+        save_on_death = core.getConfig().getBoolean("save.on_death");
     }
 
     /** Handle player login attempt, kick if player has already logged in any data-sync server

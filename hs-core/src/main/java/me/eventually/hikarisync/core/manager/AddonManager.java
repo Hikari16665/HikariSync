@@ -63,6 +63,8 @@ public class AddonManager {
                 anyLoaded = true;
             }
         }
+        System.out.println(loadReasonsMap);
+        System.out.println(saveReasonsMap);
         return anyLoaded;
     }
     public boolean initAddon(HSAddon addon){
@@ -100,9 +102,10 @@ public class AddonManager {
     }
 
     public void callWithReason(LoadReason reason, OfflinePlayer p) {
-        LoggingUtil.logDebug("Requesting save from addons, reason: " + reason.toString(), reason);
+        LoggingUtil.logDebug("Requesting load from addons, reason: " + reason.toString(), reason);
         Set<HSAddon> addons = getAddonsByReason(reason);
         addons.forEach(addon -> {
+            LoggingUtil.logDebug("Called Addon " + addon.getAddonName() + " with reason " + reason);
             addon.loadData(p, core.getDb(), reason);
         });
     }
@@ -110,6 +113,7 @@ public class AddonManager {
         LoggingUtil.logDebug("Requesting save from addons, reason: " + reason.toString(), reason);
         Set<HSAddon> addons = getAddonsByReason(reason);
         addons.forEach(addon -> {
+            LoggingUtil.logDebug("Called Addon " + addon.getAddonName() + " with reason " + reason.toString());
             addon.saveData(p, core.getDb(), reason);
         });
     }
